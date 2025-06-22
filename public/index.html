@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanya Bot Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: slideInDown 1s ease-out;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-online {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .status-offline {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .command-viewer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .command-search {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .command-search:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .command-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .command-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .command-name {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .command-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .server-management {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .server-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .server-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-robot"></i> Lanya Bot</h1>
+            <p>Advanced Discord Bot Dashboard</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">
+                <i class="fas fa-chart-line"></i> Overview
+            </button>
+            <button class="nav-tab" onclick="showTab('commands')">
+                <i class="fas fa-terminal"></i> Commands
+            </button>
+            <button class="nav-tab" onclick="showTab('servers')">
+                <i class="fas fa-server"></i> Servers
+            </button>
+            <button class="nav-tab" onclick="showTab('analytics')">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="status-card">
+                <div class="status-indicator status-online">
+                    <i class="fas fa-circle"></i>
+                    <span>Bot Online</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-server"></i>
+                        <h3 id="serverCount">Loading...</h3>
+                        <p>Servers</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3 id="userCount">Loading...</h3>
+                        <p>Users</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <h3 id="uptime">Loading...</h3>
+                        <p>Uptime</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-memory"></i>
+                        <h3 id="memoryUsage">Loading...</h3>
+                        <p>Memory Usage</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-music"></i> Music System</h3>
+                    <p>Advanced music playback with support for YouTube, Spotify, and more. Features include queue management, filters, and high-quality audio.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-shield-alt"></i> Moderation</h3>
+                    <p>Comprehensive moderation tools including auto-moderation, warning system, and advanced logging capabilities for server management.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-gamepad"></i> Fun & Games</h3>
+                    <p>Entertainment features like trivia, WorldWar game, memes, and interactive commands to keep your community engaged.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-ticket-alt"></i> Ticket System</h3>
+                    <p>Professional ticket management system with categories, transcripts, and customizable panels for support requests.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-chart-line"></i> Leveling System</h3>
+                    <p>Customizable XP and leveling system with leaderboards, custom welcome cards, and role rewards for active members.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-cube"></i> Minecraft Integration</h3>
+                    <p>Minecraft server status monitoring, player statistics, and skin viewing capabilities for gaming communities.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commands Tab -->
+        <div id="commands" class="tab-content">
+            <div class="command-viewer">
+                <h2 class="chart-title">Command Explorer</h2>
+                <input type="text" class="command-search" placeholder="Search commands..." id="commandSearch">
+                <div class="command-list" id="commandList">
+                    <!-- Commands will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Servers Tab -->
+        <div id="servers" class="tab-content">
+            <div class="server-management">
+                <h2 class="chart-title">Server Management</h2>
+                <div class="server-grid" id="serverGrid">
+                    <!-- Servers will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="chart-container">
+                <h2 class="chart-title">Performance Analytics</h2>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2 class="chart-title">Command Usage</h2>
+                <canvas id="commandChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Made with ❤️ by <a href="https://github.com/notsads" target="_blank">notsads</a> | 
+            <a href="https://discord.gg/kAYpdenZ8b" target="_blank">Support Server</a> | 
+            <a href="https://github.com/birajrai/lanya" target="_blank">GitHub</a></p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">🎨 UI Enhanced by <a href="https://github.com/notsads" target="_blank" style="color: white;">notsads</a></p>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Sample command data
+        const commands = [
+            { name: '/play', description: 'Play music from various sources', category: 'Music' },
+            { name: '/search', description: 'Search and select music tracks', category: 'Music' },
+            { name: '/queue', description: 'View and manage the music queue', category: 'Music' },
+            { name: '/ban', description: 'Ban a user from the server', category: 'Moderation' },
+            { name: '/kick', description: 'Kick a user from the server', category: 'Moderation' },
+            { name: '/timeout', description: 'Timeout a user', category: 'Moderation' },
+            { name: '/trivia', description: 'Play trivia game', category: 'Fun' },
+            { name: '/meme', description: 'Get random memes', category: 'Fun' },
+            { name: '/joke', description: 'Tell a joke', category: 'Fun' },
+            { name: '/calculator', description: 'Scientific calculator', category: 'Utility' },
+            { name: '/weather', description: 'Get weather information', category: 'Utility' },
+            { name: '/translate', description: 'Translate text', category: 'Utility' },
+            { name: '/level', description: 'Check your level and XP', category: 'Leveling' },
+            { name: '/leaderboard', description: 'View server leaderboard', category: 'Leveling' },
+            { name: '/serverstatus', description: 'Check Minecraft server status', category: 'Minecraft' },
+            { name: '/skin', description: 'View player skin', category: 'Minecraft' }
+        ];
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Initialize charts if analytics tab
+            if (tabName === 'analytics') {
+                initializeCharts();
+            }
+        }
+
+        // Command search functionality
+        function initializeCommandSearch() {
+            const searchInput = document.getElementById('commandSearch');
+            const commandList = document.getElementById('commandList');
+            
+            function filterCommands() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredCommands = commands.filter(cmd => 
+                    cmd.name.toLowerCase().includes(searchTerm) ||
+                    cmd.description.toLowerCase().includes(searchTerm) ||
+                    cmd.category.toLowerCase().includes(searchTerm)
+                );
+                
+                displayCommands(filteredCommands);
+            }
+            
+            function displayCommands(commandsToShow) {
+                commandList.innerHTML = commandsToShow.map(cmd => `
+                    <div class="command-item">
+                        <div class="command-name">${cmd.name}</div>
+                        <div class="command-description">${cmd.description}</div>
+                        <small style="color: #667eea; font-weight: 500;">${cmd.category}</small>
+                    </div>
+                `).join('');
+            }
+            
+            searchInput.addEventListener('input', filterCommands);
+            displayCommands(commands);
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Memory Usage (MB)',
+                        data: [120, 135, 145, 155, 140, 130],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Command Usage Chart
+            const commandCtx = document.getElementById('commandChart').getContext('2d');
+            new Chart(commandCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Music', 'Moderation', 'Fun', 'Utility', 'Leveling', 'Minecraft'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 5, 5],
+                        backgroundColor: [
+                            '#667eea',
+                            '#f44336',
+                            '#4CAF50',
+                            '#FF9800',
+                            '#9C27B0',
+                            '#00BCD4'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fetch real-time bot statistics
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Update status indicator
+                const statusIndicator = document.querySelector('.status-indicator');
+                if (data.online) {
+                    statusIndicator.className = 'status-indicator status-online';
+                    statusIndicator.innerHTML = '<i class="fas fa-circle"></i><span>Bot Online</span>';
+                } else {
+                    statusIndicator.className = 'status-indicator status-offline';
+                    statusIndicator.innerHTML = '<i class="fas fa-circle"></i><span>Bot Offline</span>';
+                }
+                
+                // Update statistics
+                document.getElementById('serverCount').textContent = data.servers.toLocaleString();
+                document.getElementById('userCount').textContent = data.users.toLocaleString();
+                document.getElementById('uptime').textContent = data.uptime;
+                document.getElementById('memoryUsage').textContent = data.memoryUsage;
+                
+                // Update additional stats if available
+                if (data.commands) {
+                    const commandElement = document.getElementById('commandCount');
+                    if (commandElement) {
+                        commandElement.textContent = data.commands;
+                    }
+                }
+                
+                // Update version if available
+                if (data.version) {
+                    const versionElement = document.getElementById('botVersion');
+                    if (versionElement) {
+                        versionElement.textContent = data.version;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                // Show offline status if API fails
+                const statusIndicator = document.querySelector('.status-indicator');
+                statusIndicator.className = 'status-indicator status-offline';
+                statusIndicator.innerHTML = '<i class="fas fa-circle"></i><span>Connection Error</span>';
+                
+                // Show error notification
+                showNotification('Failed to connect to bot API', 'error');
+            }
+        }
+
+        // Fetch bot information
+        async function updateBotInfo() {
+            try {
+                const response = await fetch('/api/botinfo');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Update bot info if elements exist
+                const botNameElement = document.getElementById('botName');
+                if (botNameElement) {
+                    botNameElement.textContent = data.name;
+                }
+                
+                const versionElement = document.getElementById('botVersion');
+                if (versionElement) {
+                    versionElement.textContent = data.version;
+                }
+                
+                const lavalinkElement = document.getElementById('lavalinkStatus');
+                if (lavalinkElement) {
+                    lavalinkElement.textContent = data.lavalink;
+                    lavalinkElement.className = data.lavalink === 'Connected' ? 'status-online' : 'status-offline';
+                }
+                
+            } catch (error) {
+                console.error('Error fetching bot info:', error);
+            }
+        }
+
+        // Fetch server list
+        async function updateServerList() {
+            try {
+                const response = await fetch('/api/servers');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const servers = await response.json();
+                
+                const serverListElement = document.getElementById('serverList');
+                if (serverListElement && servers.length > 0) {
+                    const serverHTML = servers.slice(0, 5).map(server => `
+                        <div class="server-item">
+                            <img src="${server.icon || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="${server.name}" class="server-icon">
+                            <div class="server-info">
+                                <div class="server-name">${server.name}</div>
+                                <div class="server-stats">${server.memberCount} members • ${server.channels} channels</div>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    serverListElement.innerHTML = serverHTML;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching servers:', error);
+            }
+        }
+
+        // Health check function
+        async function checkHealth() {
+            try {
+                const response = await fetch('/api/health');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const health = await response.json();
+                
+                // Update health status if element exists
+                const healthElement = document.getElementById('healthStatus');
+                if (healthElement) {
+                    healthElement.textContent = health.status;
+                    healthElement.className = health.status === 'healthy' ? 'status-online' : 'status-offline';
+                }
+                
+                return health.status === 'healthy';
+                
+            } catch (error) {
+                console.error('Health check failed:', error);
+                return false;
+            }
+        }
+
+        // Enhanced notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Lanya Dashboard...');
+            
+            // Initialize components
+            initializeCommandSearch();
+            
+            // Initial data fetch
+            updateStats();
+            updateBotInfo();
+            updateServerList();
+            checkHealth();
+            
+            // Set up periodic updates
+            setInterval(updateStats, 5000); // Update stats every 5 seconds
+            setInterval(updateBotInfo, 10000); // Update bot info every 10 seconds
+            setInterval(updateServerList, 30000); // Update server list every 30 seconds
+            setInterval(checkHealth, 15000); // Health check every 15 seconds
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('Dashboard loaded successfully! 🎉');
+            }, 1000);
+            
+            // Add error handling for network issues
+            window.addEventListener('online', () => {
+                showNotification('Connection restored! 🔗', 'success');
+                updateStats();
+            });
+            
+            window.addEventListener('offline', () => {
+                showNotification('Connection lost! Check your internet connection.', 'error');
+            });
+            
+            console.log('✅ Dashboard initialization complete');
+        });
+
+        // Add loading states
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            }
+        }
+
+        function hideLoading(elementId, content) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = content;
+            }
+        }
+    </script>
+</body>
+</html> 

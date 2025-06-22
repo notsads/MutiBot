@@ -10,52 +10,50 @@ const {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('embedbuilder')
-    .setDescription('Create a custom embed using an interactive modal'),
+    .setDescription('Create a beautiful custom embed using an interactive modal'),
 
   async execute(interaction) {
     const modal = new ModalBuilder()
       .setCustomId('embed_builder')
-      .setTitle('Embed Builder');
+      .setTitle('🎨 Embed Builder - Create Your Custom Embed');
 
     const titleInput = new TextInputBuilder()
       .setCustomId('embed_title')
-      .setLabel('Title (optional)')
+      .setLabel('📝 Title (Optional)')
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Enter the embed title')
+      .setPlaceholder('Enter a catchy title for your embed...')
       .setRequired(false)
       .setMaxLength(256);
 
     const descriptionInput = new TextInputBuilder()
       .setCustomId('embed_description')
-      .setLabel('Description (required)')
+      .setLabel('📄 Description (Required)')
       .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder('Enter the embed description')
+      .setPlaceholder('Write your main message here. You can use **bold**, *italic*, and other markdown formatting!')
       .setRequired(true)
       .setMaxLength(4000);
 
     const colorInput = new TextInputBuilder()
       .setCustomId('embed_color')
-      .setLabel('Color (optional, hex value)')
+      .setLabel('🎨 Color (Optional)')
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('#FF0000 for red')
+      .setPlaceholder('#FF6B6B (Red) | #4ECDC4 (Teal) | #45B7D1 (Blue) | #96CEB4 (Green)')
       .setRequired(false)
       .setMaxLength(7);
 
     const authorInput = new TextInputBuilder()
       .setCustomId('embed_author')
-      .setLabel('Author (optional, format: name|url|icon_url)')
+      .setLabel('👤 Author (Optional)')
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder(
-        'John Doe|https://example.com|https://example.com/icon.png'
-      )
+      .setPlaceholder('Format: Name|URL|IconURL (separate with |)')
       .setRequired(false)
       .setMaxLength(300);
 
     const fieldsInput = new TextInputBuilder()
       .setCustomId('embed_fields')
-      .setLabel('Fields (optional, format: name|value|inline)')
+      .setLabel('📋 Fields (Optional)')
       .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder('Field1|Value1|true\nField2|Value2|false')
+      .setPlaceholder('Format: Name|Value|Inline\nExample:\nServer Info|This is a great server!|true\nMember Count|1000+ members|false')
       .setRequired(false)
       .setMaxLength(1000);
 

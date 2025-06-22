@@ -1,25 +1,7 @@
 const { Events, AttachmentBuilder, EmbedBuilder } = require('discord.js');
-const { createCanvas, loadImage } = require('@napi-rs/canvas');
-const path = require('path');
+const CanvasUtils = require('../utils/canvasUtils');
 const Welcome = require('../models/welcome');
 const AutoRole = require('../models/AutoRoles');
-
-function getOrdinalSuffix(number) {
-  const lastDigit = number % 10;
-  const lastTwoDigits = number % 100;
-
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) return 'th';
-  switch (lastDigit) {
-    case 1:
-      return 'st';
-    case 2:
-      return 'nd';
-    case 3:
-      return 'rd';
-    default:
-      return 'th';
-  }
-}
 
 module.exports = {
   name: Events.GuildMemberAdd,
@@ -31,57 +13,10 @@ module.exports = {
       if (!welcomeData || !welcomeData.enabled || !welcomeData.channelId)
         return;
 
-      const canvas = createCanvas(1920, 1080);
-      const ctx = canvas.getContext('2d');
+      // Create welcome card using CanvasUtils
+      const canvas = await CanvasUtils.createWelcomeCard(member, member.guild);
 
-      // Load background
-      const background = await loadImage(
-        path.join(__dirname, '../utils/welcome-background.png')
-      );
-      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-      // Load avatar
-      const avatar = await loadImage(
-        member.user.displayAvatarURL({ extension: 'png', size: 512 })
-      );
-      const centerX = 960;
-      const centerY = 350;
-      const radius = 250;
-
-      // Add dark background behind avatar
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius + 20, 0, Math.PI * 2, true);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      ctx.fill();
-      ctx.restore();
-
-      // Clip and draw avatar
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(
-        avatar,
-        centerX - radius,
-        centerY - radius,
-        radius * 2,
-        radius * 2
-      );
-      ctx.restore();
-
-      // Add avatar border
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.stroke();
-
-      // Member info
-      const memberCount = member.guild.memberCount;
-      const ordinalSuffix = getOrdinalSuffix(memberCount);
-
+      // Process welcome message
       let description =
         welcomeData.description || 'Welcome {member} to {server}';
       description = description
@@ -97,44 +32,44 @@ module.exports = {
           /{accountage}/g,
           `<t:${Math.floor(member.user.createdAt / 1000)}:R>`
         )
-        .replace(/{membercount}/g, memberCount)
+        .replace(/{membercount}/g, member.guild.memberCount)
         .replace(
           /{serverage}/g,
           `<t:${Math.floor(member.guild.createdAt / 1000)}:R>`
         );
 
-      // Add welcome text
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-      ctx.shadowBlur = 15;
-      ctx.font = 'bold 150px Arial'; // Use system font
-      ctx.fillStyle = '#FFD700';
-      ctx.textAlign = 'center';
-      ctx.fillText('Welcome', canvas.width / 2, 750);
-
-      ctx.font = '100px Arial';
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillText(`${member.user.username}`, canvas.width / 2, 850);
-
-      ctx.font = '80px Arial';
-      ctx.fillStyle = '#FFD700';
-      ctx.fillText(
-        `You are our ${memberCount}${ordinalSuffix} Member!`,
-        canvas.width / 2,
-        950
-      );
-
-      // Send welcome image
+      // Send welcome image with enhanced embed
       const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), {
         name: 'welcome.png',
       });
+      
       const welcomeChannel = member.guild.channels.cache.get(
         welcomeData.channelId
       );
+      
       if (welcomeChannel) {
         const welcomeEmbed = new EmbedBuilder()
-          .setColor('#00BFFF')
+          .setColor(0x4ECDC4)
+          .setTitle('🎉 Welcome to the Server!')
           .setDescription(description)
+          .addFields(
+            {
+              name: '👤 Member Info',
+              value: `**Username:** ${member.user.tag}\n**Account Created:** <t:${Math.floor(member.user.createdAt / 1000)}:R>\n**Member #${member.guild.memberCount}**`,
+              inline: true
+            },
+            {
+              name: '📊 Server Stats',
+              value: `**Total Members:** ${member.guild.memberCount}\n**Server Created:** <t:${Math.floor(member.guild.createdAt / 1000)}:R>`,
+              inline: true
+            }
+          )
           .setImage('attachment://welcome.png')
+          .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+          .setFooter({
+            text: `Welcome to ${member.guild.name}`,
+            iconURL: member.guild.iconURL({ dynamic: true })
+          })
           .setTimestamp();
 
         welcomeChannel.send({ embeds: [welcomeEmbed], files: [attachment] });

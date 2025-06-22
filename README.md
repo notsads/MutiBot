@@ -1,154 +1,65 @@
 <div align="center">
-
-  <h1><img src="utils/logo.jpg" alt="Lanya Logo" width="35"> Lanya Discord Bot</h1>
-  <br>
-  <p><strong>An open-source Discord bot designed to enhance community interaction with a variety of engaging and useful features.</strong></p>
+  <img src="https://i.imgur.com/8tBXd6H.gif" alt="Lanya Bot" width="200"/>
   
-  [![Discord](https://img.shields.io/discord/865198018872999966?color=5865F2&logo=discord&logoColor=white)](https://discord.gg/kAYpdenZ8b)
-  [![License](https://img.shields.io/github/license/birajrai/Lanya)](LICENSE)
-  [![Stars](https://img.shields.io/github/stars/birajrai/Lanya?style=social)](https://github.com/birajrai/Lanya/stargazers)
+  # 🤖 Lanya Bot
+  
+  **Advanced Discord Bot with 100+ Features & Beautiful UI**
+  
+  [![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/kAYpdenZ8b)
+  [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/birajrai/lanya)
+  [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+  
+  *An open-source Discord bot designed to enhance community interaction with a variety of engaging and useful features, featuring a beautiful web dashboard and modern UI.*
+  
+  **🎨 UI Enhanced by [notsads](https://github.com/notsads)**
 </div>
 
-## ✨ About Lanya
+---
 
-Lanya is a Discord bot built to improve server engagement and provide useful tools for both administrators and members. With commands ranging from fun interactions to powerful moderation tools.
+## ✨ Features
 
-## 🚀 Features
+### 🎨 **Beautiful Web Dashboard**
+- **Real-time Statistics**: Live bot stats with beautiful animations
+- **Modern UI**: Responsive design with glassmorphism effects
+- **Interactive Elements**: Hover effects and smooth transitions
+- **Mobile Friendly**: Optimized for all device sizes
 
-- **🎉 Fun Commands** - Keep your community engaged with trivia, jokes, games, and more
-- **🛠️ Moderation Tools** - Maintain server order with comprehensive moderation capabilities
-- **🔧 Utility Functions** - Provide practical tools like calculators, translators, and weather reports
-- **🎮 Minecraft Integration** - Connect your Discord server with Minecraft through server status monitoring and skin visualization
-- **📈 Leveling System** - Encourage engagement with an XP-based leveling system
-- **🎁 Giveaways** - Host and manage giveaways with customizable requirements
-- **👋 Welcome System** - Greet new members with customizable welcome messages
+### 🎵 **Advanced Music System**
+- **Multi-Platform Support**: YouTube, Spotify, SoundCloud, and more
+- **High-Quality Audio**: Crystal clear sound with Lavalink
+- **Queue Management**: Advanced queue controls and filters
+- **Auto-Play**: Intelligent music recommendations
 
-## 🔍 Command Categories
+### 🛡️ **Comprehensive Moderation**
+- **Auto-Moderation**: Smart content filtering and spam protection
+- **Warning System**: Track and manage user warnings
+- **Advanced Logging**: Detailed server activity logs
+- **Role Management**: Automated role assignment and management
 
-<details>
-<summary>ℹ️ <strong>Info Commands</strong></summary>
-<br>
+### 🎮 **Fun & Entertainment**
+- **Interactive Games**: Trivia, WorldWar, and more
+- **Meme Generator**: Create and share memes
+- **Custom Welcome Cards**: Beautiful welcome images
+- **Leveling System**: XP and rewards for active members
 
-| Command       | Description                            |
-| ------------- | -------------------------------------- |
-| `/botinfo`    | Display information about the bot      |
-| `/help`       | Show help menu with all commands       |
-| `/ping`       | Check the bot's response time          |
-| `/roleinfo`   | View detailed information about a role |
-| `/serverinfo` | Display information about the server   |
-| `/userinfo`   | Show information about a user          |
-| `/invite`     | Shows bot invite link                  |
-| `/support`    | Get invite link to the support server  |
+### 🎫 **Professional Ticket System**
+- **Category Management**: Organize support requests
+- **Transcript Generation**: Detailed conversation logs
+- **Custom Panels**: Beautiful ticket creation interfaces
+- **Auto-Close**: Intelligent ticket management
 
-</details>
+### 🟩 **Minecraft Integration**
+- **Server Status**: Real-time Minecraft server monitoring
+- **Player Statistics**: View player skins and stats
+- **Server Management**: Add/remove server monitoring
+- **Status Updates**: Automatic status notifications
 
-<details>
-<summary>🎈 <strong>Fun Commands</strong></summary>
-<br>
+---
 
-| Command         | Description                                |
-| --------------- | ------------------------------------------ |
-| `/8ball`        | Ask the magic 8-ball a question            |
-| `/catfact`      | Get a random fact about cats               |
-| `/coinflip`     | Flip a coin                                |
-| `/dadjoke`      | Hear a random dad joke                     |
-| `/dogfact`      | Get a random fact about dogs               |
-| `/joke`         | Receive a random joke                      |
-| `/meme`         | View a random meme                         |
-| `/pp`           | Check the size of your... nevermind        |
-| `/randomnumber` | Generate a random number                   |
-| `/trivia`       | Test your knowledge with a trivia question |
-
-</details>
-
-<details>
-<summary>🔨 <strong>Moderation Commands</strong></summary>
-<br>
-
-| Command      | Description                             |
-| ------------ | --------------------------------------- |
-| `/ban`       | Ban a user from the server              |
-| `/clear`     | Delete multiple messages at once        |
-| `/kick`      | Kick a user from the server             |
-| `/lock`      | Lock a channel to prevent messages      |
-| `/nick`      | Change a user's nickname                |
-| `/timeout`   | Timeout a user for a specified duration |
-| `/unban`     | Unban a user from the server            |
-| `/unlock`    | Unlock a previously locked channel      |
-| `/untimeout` | Remove a timeout from a user            |
-| `/warn`      | Warn a user for inappropriate behavior  |
-| `/warnings`  | View a user's warning history           |
-
-</details>
-
-<details>
-<summary>🪛 <strong>Utility Commands</strong></summary>
-<br>
-
-| Command       | Description                                |
-| ------------- | ------------------------------------------ |
-| `/calculator` | Perform mathematical calculations          |
-| `/define`     | Look up the definition of a word           |
-| `/todo`       | Manage your personal to-do list            |
-| `/translate`  | Translate text between languages           |
-| `/weather`    | Check the weather for a specified location |
-
-</details>
-
-<details>
-<summary>⚙️ <strong>Admin Commands</strong></summary>
-<br>
-
-| Command          | Description                                                 |
-| ---------------- | ----------------------------------------------------------- |
-| `/giveaway`      | Create and manage giveaways                                 |
-| `/leveladmin`    | Configure the leveling system                               |
-| `/welcome`       | Set up custom welcome messages                              |
-| `/guildsettings` | Manage server-specific settings                             |
-| `/autorole`      | Configure roles to be automatically assigned to new members |
-
-</details>
-
-<details>
-<summary>🌎 <strong>Minecraft Commands</strong></summary>
-<br>
-
-| Command               | Description                            |
-| --------------------- | -------------------------------------- |
-| `/achievement`        | Generate a Minecraft achievement image |
-| `/addserverstatus`    | Add a Minecraft server to monitor      |
-| `/bodyavatar`         | View a player's body avatar            |
-| `/fullbody`           | View a player's full body model        |
-| `/headavatar`         | View a player's head avatar            |
-| `/listserverstatus`   | List all monitored Minecraft servers   |
-| `/playerhead`         | Get a player's head image              |
-| `/removeserverstatus` | Stop monitoring a Minecraft server     |
-| `/serverstatus`       | Check the status of a monitored server |
-| `/skin`               | View a player's skin                   |
-
-</details>
-
-<details>
-<summary>📊 <strong>Level Commands</strong></summary>
-<br>
-  
-  | Command        | Description                            |
-  | ---------------| -------------------------------------- |
-  | `/level`       | Check your current level and XP        |
-  | `/leaderboard` | View the server's level leaderboard    |
-</details>
-
-## 🤝 Support Server
-
-For any assistance, feature requests, or bug reports, join our official support server:
-
-  <a href="https://discord.gg/kAYpdenZ8b" target="_blank">
-    <img src="https://img.shields.io/static/v1?message=Discord&logo=discord&label=&color=7289DA&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="discord logo"  />
-
-## 🔧 Quick Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-
 - [Node.js](https://nodejs.org/) (v16.9.0 or higher)
 - [MongoDB](https://www.mongodb.com/) database
 - [Discord Bot Token](https://discord.com/developers/applications)
@@ -157,112 +68,316 @@ For any assistance, feature requests, or bug reports, join our official support 
 ### Installation
 
 1. **Clone the Repository**
-
 ```bash
 git clone https://github.com/birajrai/Lanya.git
 cd Lanya
 ```
 
 2. **Install Dependencies**
-
 ```bash
 npm install
 ```
 
-3. **Enter Your Configuration Details**
-
-The setup script will prompt you to enter:
-
-- Discord Bot Token
-- Client ID
-- Weather API Key
-- MongoDB Connection String
+3. **Setup Configuration**
+```bash
+npm run setup
+```
 
 4. **Start the Bot**
-
 ```bash
-npm run start
+npm start
 ```
 
-For production environments:
+5. **Access Dashboard**
+Open your browser and visit: `http://localhost:10000`
 
-```bash
-npm run start:prod
-```
+---
 
-## 🧩 Project Structure
+## 🎨 UI Enhancements
 
-```
-Lanya/
-├── commands/           # Command files organized by category
-├── events/             # Event handler files
-├── models/             # Database models
-├── utils/              # Utility functions
-├── config.json         # Configuration file (generated by setup)
-├── index.js            # Main entry point
-└── setup.js            # Interactive setup script
-```
+### **Modern Web Dashboard**
+The bot now includes a beautiful web dashboard accessible at `http://localhost:10000` featuring:
+
+- **Real-time Statistics**: Live updates of bot performance
+- **Glassmorphism Design**: Modern glass-like UI elements
+- **Responsive Layout**: Works perfectly on all devices
+- **Interactive Cards**: Hover effects and animations
+- **Professional Styling**: Clean, modern aesthetic
+
+### **Enhanced Discord Embeds**
+All bot responses now feature:
+
+- **Consistent Color Scheme**: Beautiful gradient colors
+- **Professional Icons**: Meaningful emojis and symbols
+- **Better Typography**: Improved readability
+- **Interactive Elements**: Buttons and dropdowns
+- **Error Handling**: User-friendly error messages
+
+### **Improved Console Output**
+Enhanced terminal experience with:
+
+- **Color-coded Messages**: Easy-to-read status updates
+- **Progress Indicators**: Visual loading states
+- **Structured Layout**: Organized information display
+- **Success/Error States**: Clear status feedback
+
+---
+
+## 📚 Command Categories
+
+<details>
+<summary>🎵 <strong>Music Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/play`        | Play music from various sources        |
+| `/search`      | Search and select music tracks         |
+| `/queue`       | View and manage the music queue        |
+| `/nowplaying`  | Display currently playing track        |
+| `/controls`    | Music player controls                  |
+| `/filters`     | Apply audio filters                    |
+| `/lyrics`      | Get song lyrics                        |
+| `/playlist`    | Manage playlists                       |
+| `/autoplay`    | Enable/disable autoplay                |
+| `/loop`        | Set loop mode                          |
+
+</details>
+
+<details>
+<summary>🛡️ <strong>Moderation Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/ban`         | Ban a user from the server             |
+| `/kick`        | Kick a user from the server            |
+| `/timeout`     | Timeout a user                         |
+| `/warn`        | Warn a user                            |
+| `/warnings`    | View user warnings                     |
+| `/clear`       | Clear messages from a channel          |
+| `/lock`        | Lock a channel                         |
+| `/unlock`      | Unlock a channel                       |
+| `/nick`        | Change user nickname                   |
+| `/nuke`        | Delete and recreate a channel          |
+
+</details>
+
+<details>
+<summary>🎮 <strong>Fun Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/trivia`      | Play trivia game                       |
+| `/meme`        | Get random memes                       |
+| `/joke`        | Tell a joke                            |
+| `/8ball`       | Ask the magic 8-ball                   |
+| `/coinflip`    | Flip a coin                            |
+| `/randomnumber`| Generate random number                 |
+| `/dadjoke`     | Get a dad joke                         |
+| `/catfact`     | Get random cat facts                   |
+| `/dogfact`     | Get random dog facts                   |
+| `/WorldWar`    | Play WorldWar game                     |
+| `/GuessNumber` | Number guessing game                   |
+| `/pp`          | Measure pp size (fun)                  |
+
+</details>
+
+<details>
+<summary>⚙️ <strong>Administration Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/autorole`    | Set automatic role assignment           |
+| `/buttonrole`  | Create button role panels              |
+| `/giveaway`    | Start and manage giveaways             |
+| `/guildsettings`| Configure guild settings              |
+| `/leveladmin`  | Manage leveling system                 |
+| `/serverlogs`  | Configure server logging               |
+| `/welcome`     | Set up welcome system                  |
+
+</details>
+
+<details>
+<summary>🎫 <strong>Ticket Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/setup`       | Setup ticket system                    |
+| `/create-panel`| Create ticket panel                    |
+| `/manage-categories`| Manage ticket categories          |
+| `/ticket`      | Ticket management commands             |
+
+</details>
+
+<details>
+<summary>🛠️ <strong>Utility Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/calculator`  | Scientific calculator                  |
+| `/define`      | Define words                           |
+| `/embedbuilder`| Create custom embeds                   |
+| `/todo`        | Manage todo list                       |
+| `/translator`  | Translate text                         |
+| `/weather`     | Get weather information                |
+
+</details>
+
+<details>
+<summary>🟩 <strong>Minecraft Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/addserverstatus` | Add Minecraft server monitoring |
+| `/removeserverstatus` | Stop monitoring a server     |
+| `/serverstatus`       | Check server status         |
+| `/skin`               | View player skin            |
+| `/headavatar`         | Get player head avatar      |
+| `/fullbody`           | Get full player body        |
+| `/bodyavatar`         | Get player body avatar      |
+| `/playerhead`         | Get player head             |
+| `/achievement`        | Create achievement image    |
+| `/listservers`        | List monitored servers      |
+
+</details>
+
+<details>
+<summary>📊 <strong>Level Commands</strong></summary>
+<br>
+
+| Command        | Description                            |
+| ---------------| -------------------------------------- |
+| `/level`       | Check your current level and XP        |
+| `/leaderboard` | View the server's level leaderboard    |
+
+</details>
+
+---
+
+## 🌐 Web Dashboard
+
+The bot includes a beautiful web dashboard accessible at `http://localhost:10000` that provides:
+
+### **Real-time Statistics**
+- Live server count
+- User count updates
+- Memory usage monitoring
+- Uptime tracking
+
+### **Feature Showcase**
+- Interactive feature cards
+- Detailed descriptions
+- Visual icons and animations
+
+### **Professional Design**
+- Modern glassmorphism effects
+- Responsive mobile design
+- Smooth animations
+- Professional color scheme
+
+---
 
 ## 🛠️ Development
 
-### Adding New Commands
+### **Adding New Commands**
 
 1. Create a new command file in the appropriate category folder
-2. Use the command template structure
+2. Use the enhanced command template structure
 3. Register the command in the command handler
 
 Example command structure:
 
 ```javascript
 module.exports = {
-  name: 'commandname',
-  description: 'Command description',
-  options: [], // Slash command options
-  execute: async (interaction, client) => {
-    // Command code here
+  data: new SlashCommandBuilder()
+    .setName('commandname')
+    .setDescription('Command description'),
+  
+  async execute(interaction) {
+    // Enhanced embed creation
+    const embed = new EmbedBuilder()
+      .setColor(0x4ECDC4)
+      .setTitle('🎯 Command Title')
+      .setDescription('Command description')
+      .setTimestamp();
+    
+    await interaction.reply({ embeds: [embed] });
   },
 };
 ```
 
-## 🤲 Contributing
+### **UI Best Practices**
 
-Contributions are welcome and appreciated! Here's how you can contribute:
+- Use consistent color schemes (defined in `utils/utils.js`)
+- Include meaningful emojis and icons
+- Provide clear error messages
+- Use interactive components when appropriate
+- Follow the established embed patterns
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some amazing feature'`)
-5. Push to the branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
+---
 
-Please make sure to update tests and documentation as appropriate.
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** following our UI guidelines
+4. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+5. **Push to the branch** (`git push origin feature/amazing-feature`)
+6. **Open a Pull Request**
+
+### **UI Contribution Guidelines**
+
+- Follow the established color scheme and styling patterns
+- Use the enhanced console utilities for logging
+- Include proper error handling with user-friendly messages
+- Test your changes on both desktop and mobile
+- Ensure accessibility and readability
+
+---
 
 ## 📜 Code of Conduct
 
-We strive to maintain a friendly, inclusive, and respectful community. Please follow these guidelines:
+We strive to maintain a friendly, inclusive, and respectful community:
 
-- **Be Respectful**: Treat others with respect. Disagreements are okay, but be civil.
-- **Be Inclusive**: We welcome all contributions and encourage participation from everyone.
-- **Be Supportive**: Help others when they have questions and be open to feedback.
+- **Be Respectful**: Treat others with respect and kindness
+- **Be Inclusive**: Welcome contributions from everyone
+- **Be Supportive**: Help others and be open to feedback
+- **Be Professional**: Maintain high code quality and documentation
+
+---
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📋 Roadmap
+---
 
-- [ ] Server logs system
-- [ ] Advanced auto-moderation features
-- [ ] Custom command creation interface
-- [ ] Web dashboard for easy configuration
-- [ ] Enhanced Minecraft integration features
-- [ ] Music playback capabilities
-- [ ] Role reaction system
+## 🚀 Roadmap
 
-Have suggestions? Feel free to share them in our [Support Server](https://discord.gg/kAYpdenZ8b)!
+- [ ] **Enhanced Dashboard**: More interactive features and analytics
+- [ ] **Advanced Auto-Moderation**: AI-powered content filtering
+- [ ] **Custom Command Builder**: Visual command creation interface
+- [ ] **Mobile App**: Native mobile application
+- [ ] **Advanced Analytics**: Detailed server statistics
+- [ ] **Plugin System**: Third-party plugin support
+- [ ] **Voice Commands**: Voice-activated bot features
+
+Have suggestions? Share them in our [Support Server](https://discord.gg/kAYpdenZ8b)!
 
 ---
 
 <div align="center">
-  Made with ❤️ by the Lanya Development Team
+  <p>Made with ❤️ by the Lanya Development Team</p>
+  <p><strong>🎨 UI Enhanced by <a href="https://github.com/notsads">notsads</a></strong></p>
+  
+  [![Discord](https://img.shields.io/badge/Join%20Support%20Server-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/kAYpdenZ8b)
+  [![GitHub](https://img.shields.io/badge/View%20on%20GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/birajrai/lanya)
 </div>

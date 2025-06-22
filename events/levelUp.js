@@ -1,4 +1,5 @@
-const { Events } = require('discord.js');
+const { Events, AttachmentBuilder, EmbedBuilder } = require('discord.js');
+const CanvasUtils = require('../utils/canvasUtils');
 const { GuildSettings, MemberData, LevelRoles } = require('../models/Level');
 
 const cooldowns = new Map();
@@ -73,6 +74,8 @@ module.exports = {
         await module.exports.notifyLevelUp(
           message,
           memberData.level,
+          memberData.xp,
+          memberData.totalXp,
           guildData
         );
       }
@@ -87,7 +90,7 @@ module.exports = {
     await memberData.save();
   },
 
-  notifyLevelUp: async (message, level, guildData) => {
+  notifyLevelUp: async (message, level, xp, totalXp, guildData) => {
     try {
       let channel = message.channel;
 
@@ -105,9 +108,45 @@ module.exports = {
         return;
       }
 
-      await channel.send(
-        `${message.author} has leveled up to level **${level}**! 🎉`
+      // Create level-up card using CanvasUtils
+      const canvas = await CanvasUtils.createLevelUpCard(
+        message.author,
+        level,
+        xp,
+        totalXp,
+        message.guild
       );
+
+      const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), {
+        name: 'levelup.png',
+      });
+
+      // Create enhanced embed
+      const levelUpEmbed = new EmbedBuilder()
+        .setColor(0x4ECDC4)
+        .setTitle('🎉 Level Up Achievement!')
+        .setDescription(`Congratulations ${message.author}! You've reached **Level ${level}**!`)
+        .addFields(
+          {
+            name: '📊 Level Info',
+            value: `**Current Level:** ${level}\n**Current XP:** ${xp}\n**Total XP:** ${totalXp.toLocaleString()}`,
+            inline: true
+          },
+          {
+            name: '🏆 Achievement',
+            value: `**Level Progress:** ${((xp / (level * 100)) * 100).toFixed(1)}%\n**Server:** ${message.guild.name}`,
+            inline: true
+          }
+        )
+        .setImage('attachment://levelup.png')
+        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+        .setFooter({
+          text: `Level ${level} • ${message.guild.name}`,
+          iconURL: message.guild.iconURL({ dynamic: true })
+        })
+        .setTimestamp();
+
+      await channel.send({ embeds: [levelUpEmbed], files: [attachment] });
     } catch (err) {
       console.error('Level-up message failed:', err.message);
     }

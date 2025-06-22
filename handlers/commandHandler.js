@@ -1,43 +1,41 @@
 const fs = require('fs');
 const path = require('path');
-module.exports = (client) => {
-  client.commands = new Map();
+const { Collection } = require('discord.js');
+const { logSuccess, logError, logInfo, logWarning } = require('../utils/utils');
 
-  const commandsPath = path.join(__dirname, '../commands');
-  fs.readdirSync(commandsPath).forEach((category) => {
-    const categoryPath = path.join(commandsPath, category);
+module.exports = async (client) => {
+  client.commands = new Collection();
+  client.commandUsage = new Collection(); // Track command usage for analytics
+
+  const commandFolders = fs.readdirSync(path.join(__dirname, '../commands'));
+
+  for (const folder of commandFolders) {
     const commandFiles = fs
-      .readdirSync(categoryPath)
+      .readdirSync(path.join(__dirname, '../commands', folder))
       .filter((file) => file.endsWith('.js'));
 
     for (const file of commandFiles) {
-      const command = require(path.join(categoryPath, file));
+      const command = require(`../commands/${folder}/${file}`);
+      
+      // Add category information to command
+      command.category = folder;
+      
+      // Initialize usage tracking for this command
+      client.commandUsage.set(command.data.name, {
+        count: 0,
+        lastUsed: null,
+        users: new Set(),
+        errors: 0
+      });
 
-      client.commands.set(command.data.name, { ...command, category });
+      client.commands.set(command.data.name, command);
     }
-  });
-  let commandCount = 0;
-  let categoryCount = 0;
+  }
 
-  const categories = fs.readdirSync(commandsPath);
-  categoryCount = categories.length;
-
-  categories.forEach((category) => {
-    const categoryPath = path.join(commandsPath, category);
-    const commandFiles = fs
-      .readdirSync(categoryPath)
-      .filter((file) => file.endsWith('.js'));
-
-    for (const file of commandFiles) {
-      const command = require(path.join(categoryPath, file));
-      client.commands.set(command.data.name, { ...command, category });
-      commandCount++;
-    }
-  });
-
-  console.log(
-    global.styles.successColor(
-      `✅ Loaded ${commandCount} commands across ${categoryCount} categories.`
-    )
-  );
+  // Log command loading
+  logSuccess(`✅ Successfully loaded ${client.commands.size} commands`);
+  
+  // Log command categories
+  const categories = [...new Set(Array.from(client.commands.values()).map(cmd => cmd.category))];
+  logInfo(`📂 Command categories: ${categories.join(', ')}`);
 };

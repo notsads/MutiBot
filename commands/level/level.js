@@ -1,13 +1,11 @@
-const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
+const { SlashCommandBuilder, AttachmentBuilder, EmbedBuilder } = require('discord.js');
 const { MemberData, GuildSettings } = require('../../models/Level');
-const { createCanvas, loadImage, registerFont } = require('@napi-rs/canvas');
-const sharp = require('sharp');
-const fetch = require('node-fetch');
+const CanvasUtils = require('../../utils/canvasUtils');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('level')
-    .setDescription('Check your level and XP.')
+    .setDescription('Check your level and XP with beautiful graphics.')
     .addUserOption((option) =>
       option.setName('user').setDescription('The user to check.')
     ),
@@ -52,225 +50,157 @@ module.exports = {
     }
 
     const xpNeeded = this.calculateXpNeeded(memberData.level, guildData);
-    const progress = memberData.xp / xpNeeded;
-
-    const canvasWidth = 934;
-    const canvasHeight = 282;
-    const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext('2d'); // ✅ Ensure ctx is defined before using it
-
-    ctx.fillStyle = '#1C1F26';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#2C2F33';
-    ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
-
-    const innerStrokeColor = 'rgba(255, 255, 255, 0.3)';
-    ctx.strokeStyle = innerStrokeColor;
-    ctx.lineWidth = 15;
-    ctx.strokeRect(7.5, 7.5, canvas.width - 15, canvas.height - 15);
-
-    const avatarUrl = targetUser.displayAvatarURL?.({
-      extension: 'webp',
-      size: 256,
-    });
-
-    if (!avatarUrl) {
-      console.error(`Failed to fetch avatar URL for ${targetUser.username}`);
-      return interaction.editReply({
-        content: `Could not retrieve avatar for ${targetUser.username}.`,
-        flags: 64,
-      });
-    }
-
-    try {
-      console.log(`Fetching avatar: ${avatarUrl}`);
-
-      const response = await fetch(avatarUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch avatar image: ${response.statusText}`);
-      }
-
-      const buffer = await response.arrayBuffer(); // 🔹 Fix: Use `arrayBuffer()` instead of `buffer()`
-      if (!buffer || buffer.byteLength === 0) {
-        throw new Error(`Avatar image buffer is empty.`);
-      }
-
-      console.log(`Avatar buffer length: ${buffer.byteLength}`);
-
-      const pngBuffer = await sharp(Buffer.from(buffer))
-        .toFormat('png')
-        .toBuffer(); // 🔹 Fix: Convert `ArrayBuffer` to `Buffer`
-      if (!pngBuffer || pngBuffer.length === 0) {
-        throw new Error(`Failed to convert avatar to PNG.`);
-      }
-
-      console.log(`Converted PNG buffer length: ${pngBuffer.length}`);
-
-      const avatar = await loadImage(pngBuffer);
-      if (!avatar) {
-        throw new Error(`Failed to load image after conversion.`);
-      }
-
-      console.log(`Avatar loaded successfully`);
-
-      const avatarSize = 200;
-      const avatarX = 30;
-      const avatarY = 42;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(
-        avatarX + avatarSize / 2,
-        avatarY + avatarSize / 2,
-        avatarSize / 2,
-        0,
-        Math.PI * 2
-      );
-      ctx.clip();
-      ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
-      ctx.restore();
-
-      const statusColor = this.getStatusColor(
-        interaction.guild.members.cache.get(targetUser.id)?.presence?.status
-      ); // 🔹 Fix: Ensure correct status fetching
-      ctx.fillStyle = statusColor;
-      ctx.beginPath();
-      ctx.arc(
-        avatarX + avatarSize - 45,
-        avatarY + avatarSize - 25,
-        20,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
-    } catch (error) {
-      console.error(`Failed to load or convert avatar image: ${error.message}`);
-      return interaction.editReply({
-        content: `Could not load avatar image for ${targetUser.username}.`,
-        flags: 64,
-      });
-    }
-    ctx.fillStyle = '#EAEAEA';
-    ctx.font = 'bold 52px Arial, sans-serif';
-    ctx.fillText(`${targetUser.username}`, 245, 110);
-    ctx.font = 'bold 30px Arial, sans-serif';
-    ctx.fillText(`XP: ${memberData.xp} / ${xpNeeded}`, 245, 151);
-
+    const progress = (memberData.xp / xpNeeded) * 100;
     const leaderboardRank = await this.getLeaderboardRank(
       interaction.guild.id,
       memberData.level,
       memberData.xp
     );
 
-    ctx.fillStyle = '#5E81AC';
-    ctx.font = 'bold 40px Arial, sans-serif';
-
-    const rankText = `Rank #${leaderboardRank}`;
-    const levelText = `Level ${memberData.level}`;
-    const rankTextWidth = ctx.measureText(rankText).width;
-    const levelTextWidth = ctx.measureText(levelText).width;
-
-    const maxX = canvasWidth - 40; // 🔹 Adjusted max width for better alignment
-    const levelX = maxX - levelTextWidth;
-    const rankX = Math.max(245, levelX - rankTextWidth - 20); // 🔹 Prevent overlap
-
-    ctx.fillText(rankText, rankX, 60);
-    ctx.fillText(levelText, levelX, 60);
-
-    const progressBarWidth = 600;
-    const progressBarHeight = 65;
-    const progressBarX = 245;
-    const progressBarY = 160;
-
-    ctx.fillStyle = '#EAEAEA';
-    this.roundRect(
-      ctx,
-      progressBarX,
-      progressBarY,
-      progressBarWidth,
-      progressBarHeight,
-      20
-    );
-    ctx.fill();
-
-    if (progress > 0) {
-      ctx.save();
-      ctx.beginPath();
-      this.roundRect(
-        ctx,
-        progressBarX,
-        progressBarY,
-        Math.max(1, Math.min(progress * progressBarWidth, progressBarWidth)), // 🔹 Prevents negative or 0 width
-        progressBarHeight,
-        20
+    try {
+      // Create beautiful level card using CanvasUtils
+      const canvas = await this.createLevelCard(
+        targetUser,
+        memberData,
+        xpNeeded,
+        progress,
+        leaderboardRank,
+        interaction.guild
       );
-      ctx.fillStyle = '#43B581';
-      ctx.fill();
-      ctx.restore();
+
+      const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), {
+        name: 'level.png',
+      });
+
+      // Create enhanced embed
+      const levelEmbed = new EmbedBuilder()
+        .setColor(0x4ECDC4)
+        .setTitle('📊 Level Information')
+        .setDescription(`**${targetUser.username}**'s level statistics`)
+        .addFields(
+          {
+            name: '🏆 Level & Rank',
+            value: `**Level:** ${memberData.level}\n**Rank:** #${leaderboardRank}`,
+            inline: true
+          },
+          {
+            name: '📈 XP Progress',
+            value: `**Current XP:** ${memberData.xp.toLocaleString()}\n**XP Needed:** ${xpNeeded.toLocaleString()}`,
+            inline: true
+          },
+          {
+            name: '📊 Total Stats',
+            value: `**Total XP:** ${memberData.totalXp.toLocaleString()}\n**Progress:** ${progress.toFixed(1)}%`,
+            inline: true
+          }
+        )
+        .setImage('attachment://level.png')
+        .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
+        .setFooter({
+          text: `${interaction.guild.name} • Level System`,
+          iconURL: interaction.guild.iconURL({ dynamic: true })
+        })
+        .setTimestamp();
+
+      await interaction.editReply({ embeds: [levelEmbed], files: [attachment] });
+    } catch (error) {
+      console.error('Error creating level card:', error);
+      return interaction.editReply({
+        content: 'Failed to generate level card. Please try again.',
+        flags: 64,
+      });
     }
-
-    ctx.fillStyle = '#EAEAEA';
-    ctx.font = 'bold 36px Arial, sans-serif';
-    ctx.fillText(
-      `${Math.floor(progress * 100)}%`,
-      progressBarX + progressBarWidth / 2 - 30,
-      progressBarY + 47
-    );
-
-    const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), {
-      // 🔹 Ensured correct buffer format
-      name: 'level.png', // 🔹 Changed to PNG for better quality
-    });
-
-    await interaction.editReply({
-      content: `${targetUser.username}'s Level Information:`,
-      files: [attachment],
-    });
   },
+
+  async createLevelCard(user, memberData, xpNeeded, progress, rank, guild) {
+    const canvas = require('canvas').createCanvas(1200, 400);
+    const ctx = canvas.getContext('2d');
+
+    // Create beautiful background
+    CanvasUtils.createBackground(ctx, canvas.width, canvas.height);
+    CanvasUtils.addParticles(ctx, canvas.width, canvas.height, 25);
+    CanvasUtils.addGeometricShapes(ctx, canvas.width, canvas.height, 0.08);
+
+    // Draw avatar
+    const avatarX = 80;
+    const avatarY = canvas.height / 2;
+    const avatarRadius = 80;
+    
+    await CanvasUtils.drawAvatar(ctx, user.displayAvatarURL({ extension: 'png', size: 256 }), avatarX, avatarY, avatarRadius);
+
+    // Draw username with gradient
+    CanvasUtils.drawText(ctx, user.username, 200, 120, {
+      font: 'bold 50px Poppins-Bold',
+      gradient: CanvasUtils.createGradient(ctx, 200, 100, 600, 100, ['#ff6b6b', '#4ecdc4', '#45b7d1']),
+      align: 'left'
+    });
+
+    // Draw level and rank
+    CanvasUtils.drawText(ctx, `Level ${memberData.level}`, 200, 160, {
+      font: 'bold 40px Poppins-Bold',
+      color: 'rgba(255, 255, 255, 0.9)',
+      align: 'left'
+    });
+
+    CanvasUtils.drawText(ctx, `Rank #${rank}`, 400, 160, {
+      font: 'bold 40px Poppins-Bold',
+      color: 'rgba(255, 255, 255, 0.8)',
+      align: 'left'
+    });
+
+    // Draw progress bar
+    CanvasUtils.drawProgressBar(ctx, 200, 200, 400, 25, progress);
+
+    // Draw XP information
+    CanvasUtils.drawText(ctx, `${memberData.xp.toLocaleString()}/${xpNeeded.toLocaleString()} XP`, 200, 240, {
+      font: '20px Poppins-Regular',
+      color: 'rgba(255, 255, 255, 0.8)',
+      align: 'left'
+    });
+
+    CanvasUtils.drawText(ctx, `${progress.toFixed(1)}% Complete`, 400, 240, {
+      font: '20px Poppins-Regular',
+      color: 'rgba(255, 255, 255, 0.7)',
+      align: 'left'
+    });
+
+    // Draw total XP
+    CanvasUtils.drawText(ctx, `Total XP: ${memberData.totalXp.toLocaleString()}`, 200, 270, {
+      font: '18px Poppins-Regular',
+      color: 'rgba(255, 255, 255, 0.6)',
+      align: 'left'
+    });
+
+    // Draw server name
+    CanvasUtils.drawText(ctx, guild.name, canvas.width - 30, canvas.height - 30, {
+      font: '18px Poppins-Regular',
+      color: 'rgba(255, 255, 255, 0.7)',
+      align: 'right'
+    });
+
+    // Add sparkles around avatar
+    CanvasUtils.addSparkles(ctx, avatarX, avatarY, avatarRadius + 30, 8);
+
+    return canvas;
+  },
+
   calculateXpNeeded(level, guildData) {
-    return level === 1
-      ? guildData.startingXp
-      : guildData.startingXp + (level - 1) * guildData.xpPerLevel;
+    if (level === 1) return guildData.startingXp || 100;
+    return (
+      (guildData.startingXp || 100) +
+      (level - 1) * (guildData.xpPerLevel || 50)
+    );
   },
-  roundRect(ctx, x, y, width, height, radius) {
-    const r = x + width;
-    const b = y + height;
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(r - radius, y);
-    ctx.quadraticCurveTo(r, y, r, y + radius);
-    ctx.lineTo(r, b - radius);
-    ctx.quadraticCurveTo(r, b, r - radius, b);
-    ctx.lineTo(x + radius, b);
-    ctx.quadraticCurveTo(x, b, x, b - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-    ctx.clip();
-    return ctx;
-  },
-  getStatusColor(status) {
-    switch (status) {
-      case 'online':
-        return '#43B581';
-      case 'idle':
-        return '#F9A825';
-      case 'dnd':
-        return '#E84118';
-      case 'offline':
-      default:
-        return '#7E7B7A';
-    }
-  },
+
   async getLeaderboardRank(guildId, level, xp) {
-    const leaderboard = await MemberData.find({ guildId: guildId })
+    const members = await MemberData.find({ guildId })
       .sort({ level: -1, xp: -1 })
       .lean();
-    const rank =
-      leaderboard.findIndex(
-        (user) =>
-          user.level === level && user.guildId === guildId && user.xp === xp
-      ) + 1;
-    return rank > 0 ? rank : 'NA';
+
+    const rank = members.findIndex(
+      (member) => member.level === level && member.xp === xp
+    );
+
+    return rank + 1;
   },
 };
