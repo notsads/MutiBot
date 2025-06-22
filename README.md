@@ -370,14 +370,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] **Plugin System**: Third-party plugin support
 - [ ] **Voice Commands**: Voice-activated bot features
 
-Have suggestions? Share them in our [Support Server](https://discord.gg/kAYpdenZ8b)!
+Have suggestions? Share them in our [Support Server](https://discord.gg/MBemErWj8p)!
 
 ---
 
 <div align="center">
-  <p>Made with ❤️ by the Lanya Development Team</p>
+  <p>Modified By notsads </p>
   <p><strong>🎨 UI Enhanced by <a href="https://github.com/notsads">notsads</a></strong></p>
   
-  [![Discord](https://img.shields.io/badge/Join%20Support%20Server-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/kAYpdenZ8b)
+  [![Discord](https://img.shields.io/badge/Join%20Support%20Server-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/MBemErWj8p)
   [![GitHub](https://img.shields.io/badge/View%20on%20GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/birajrai/lanya)
 </div>
