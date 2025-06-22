@@ -12,6 +12,27 @@ const Canvas = require('canvas');
 const sharp = require('sharp');
 const fetch = require('node-fetch');
 
+// Helper function to create placeholder avatar
+async function createPlaceholderAvatar(size = 256) {
+  const canvas = Canvas.createCanvas(size, size);
+  const ctx = canvas.getContext('2d');
+  
+  // Draw background circle
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#7289da';
+  ctx.fill();
+  
+  // Draw user icon
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `${size * 0.4}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('👤', size / 2, size / 2);
+  
+  return canvas;
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('worldwar')
@@ -231,26 +252,37 @@ async function announceElimination(channel, killer, victim, remaining, guild) {
   );
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-  const killerUser = guild.members.cache.get(killer);
-  const killerAv = killerUser.displayAvatarURL({
-    format: 'webp',
-    size: 256,
-  });
-  const killerResponse = await fetch(killerAv);
-  const killerBuffer = await killerResponse.buffer();
-  const killerPngBuffer = await sharp(killerBuffer).png().toBuffer();
+  let killerAvatar, victimAvatar;
 
-  const victimUser = guild.members.cache.get(victim);
-  const victimAv = victimUser.displayAvatarURL({
-    format: 'png',
-    size: 256,
-  });
-  const victimResponse = await fetch(victimAv);
-  const victimBuffer = await victimResponse.buffer();
-  const victimPngBuffer = await sharp(victimBuffer).png().toBuffer();
+  try {
+    const killerUser = guild.members.cache.get(killer);
+    const killerAv = killerUser.displayAvatarURL({
+      format: 'webp',
+      size: 256,
+    });
+    const killerResponse = await fetch(killerAv);
+    const killerBuffer = await killerResponse.buffer();
+    const killerPngBuffer = await sharp(killerBuffer).png().toBuffer();
+    killerAvatar = await Canvas.loadImage(killerPngBuffer);
+  } catch (error) {
+    console.warn(`Failed to load killer avatar for ${killer}: ${error.message}`);
+    killerAvatar = await createPlaceholderAvatar(256);
+  }
 
-  const killerAvatar = await Canvas.loadImage(killerPngBuffer);
-  const victimAvatar = await Canvas.loadImage(victimPngBuffer);
+  try {
+    const victimUser = guild.members.cache.get(victim);
+    const victimAv = victimUser.displayAvatarURL({
+      format: 'png',
+      size: 256,
+    });
+    const victimResponse = await fetch(victimAv);
+    const victimBuffer = await victimResponse.buffer();
+    const victimPngBuffer = await sharp(victimBuffer).png().toBuffer();
+    victimAvatar = await Canvas.loadImage(victimPngBuffer);
+  } catch (error) {
+    console.warn(`Failed to load victim avatar for ${victim}: ${error.message}`);
+    victimAvatar = await createPlaceholderAvatar(256);
+  }
 
   const verticalCenter = (canvas.height - 400) / 2;
 
@@ -347,16 +379,22 @@ async function displayWinner(
   );
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-  const winnerUser = guild.members.cache.get(winner);
-  const winnerAv = winnerUser.displayAvatarURL({
-    format: 'webp',
-    size: 256,
-  });
-  const winnerResponse = await fetch(winnerAv);
-  const winnerBuffer = await winnerResponse.buffer();
-  const winnerPngBuffer = await sharp(winnerBuffer).png().toBuffer();
+  let winnerAvatar;
 
-  const winnerAvatar = await Canvas.loadImage(winnerPngBuffer);
+  try {
+    const winnerUser = guild.members.cache.get(winner);
+    const winnerAv = winnerUser.displayAvatarURL({
+      format: 'webp',
+      size: 256,
+    });
+    const winnerResponse = await fetch(winnerAv);
+    const winnerBuffer = await winnerResponse.buffer();
+    const winnerPngBuffer = await sharp(winnerBuffer).png().toBuffer();
+    winnerAvatar = await Canvas.loadImage(winnerPngBuffer);
+  } catch (error) {
+    console.warn(`Failed to load winner avatar for ${winner}: ${error.message}`);
+    winnerAvatar = await createPlaceholderAvatar(256);
+  }
 
   const crown = await Canvas.loadImage(
     path.join(__dirname, '../../utils/crown.png')
